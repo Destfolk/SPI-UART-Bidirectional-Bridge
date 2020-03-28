@@ -1,0 +1,154 @@
+----------------------------------------------------------------------------
+--UART-SPI BIDIRECTIONAL BRIDGE
+--UART Tx.vhd
+--
+--GSoC 2020
+--
+--Copyright (C) 2020 Seif Eldeen Emad Abdalazeem
+--Email: destfolk@gmail.com
+----------------------------------------------------------------------------
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity Tx is
+    
+    generic( data_width : integer := 8;
+             stop_ticks: integer := 16
+    );
+            
+    port( clk      : in std_logic;
+          rst      : in std_logic;
+    
+          Tx_start : in std_logic;
+          qin      : in std_logic_vector (7 downto 0);
+          
+          Tx_out   : out std_logic;
+          done     : out std_logic
+    );
+          
+end Tx;
+
+architecture Behavioral of Tx is
+
+type statetype is (ideal, start, data, stop);
+
+signal state, nextstate    : statetype;
+signal clk_out             : std_logic;
+signal sum_reg, sum_next   : unsigned (3 downto 0);
+signal n, n_next           : integer;
+signal data_reg, data_next : std_logic;
+signal tst                 : std_logic_vector (7 downto 0);
+
+begin
+
+    counter: entity work.Counter(Behavioral)
+            generic map (M=>162, N=>8)
+            port map ( clk=>clk, rst=>rst, clk_out=>clk_out);
+            
+    
+    process(clk)
+    begin
+    
+        if rising_edge(clk) then 
+            
+            if (rst = '1') then
+                state <= ideal;
+                n <= 0;
+                sum_reg <= (others => '0');
+                data_reg <= '1';
+            else 
+                state <= nextstate;
+                n <= n_next;
+                sum_reg <= sum_next;
+                data_reg <= data_next;
+            end if;
+        
+        end if;
+        
+    end process;
+    
+      
+     process(clk)
+     begin
+     
+        case state is
+        
+           
+        when ideal =>
+            
+            data_next <= '1';
+            nextstate <= state;
+            n_next <= n;
+            sum_next <= sum_reg;
+            done <= '0';
+            if (clk_out = '1') then
+                if(Tx_start = '1' and tst /=qin) then
+                    nextstate <= start;
+                end if;
+            end if; 
+       
+        when start =>
+            
+            data_next <= '0';
+            tst <= qin;
+            
+            if (clk_out = '1') then
+            
+                if (sum_reg = 15) then
+                    sum_next <= (others => '0');
+                    nextstate <= data;
+                else
+                    sum_next <= sum_reg + 1;
+                end if;     
+            
+            end if;
+            
+        when data =>
+            
+            data_next <=  qin(n);
+            
+            if (clk_out = '1') then 
+                
+                if (sum_reg = 15) then
+                    
+                    if(n = data_width - 1) then
+                        nextstate <= stop;
+                    else
+                        n_next <= n+1;
+                    end if;
+                    
+                    sum_next <= (others => '0');
+                    
+                else
+                    sum_next <= sum_reg + 1;
+                end if;   
+                    
+            end if;    
+            
+        
+        when stop =>
+        
+            data_next <= '1';
+            
+            if (clk_out = '1') then  
+            
+                if (sum_reg = 15) then 
+                    done <= '1';
+                    nextstate <= ideal;
+                    sum_next <= (others => '0');
+                    n_next <= 0;
+                else
+                    sum_next <= sum_reg + 1;
+                end if;
+                
+            end if;
+                    
+        end case;
+        
+     end process;
+                 
+    Tx_out <= data_reg;
+    
+end Behavioral;
