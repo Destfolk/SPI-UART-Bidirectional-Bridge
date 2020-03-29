@@ -1,13 +1,20 @@
 ----------------------------------------------------------------------------
---UART-SPI BIDIRECTIONAL BRIDGE
---Bridge.vhd
---
---GSoC 2020
---
---Copyright (C) 2020 Seif Eldeen Emad Abdalazeem
---Email: destfolk@gmail.com
-----------------------------------------------------------------------------
 
+--UART-SPI BIDIRECTIONAL BRIDGE
+
+--Bridge.vhd
+
+--
+
+--GSoC 2020
+
+--
+
+--Copyright (C) 2020 Seif Eldeen Emad Abdalazeem
+
+--Email: destfolk@gmail.com
+
+----------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.all;
@@ -19,7 +26,7 @@ entity Bidirectional_Bridge is
     port( clk        : in std_logic;
           rst        : in std_logic;
           
-          establish  : in std_logic;
+          establish  : in std_logic_vector(1 downto 0);
           ss         : in std_logic_vector(3 downto 0);
           data_ready : in std_logic;
           
@@ -36,27 +43,88 @@ architecture Behavioral of Bidirectional_Bridge is
 
 type statetype is (ideal, start, MOSI, MISO, stop);
 
-signal state, nextstate                                 : statetype;
-signal clk_out                                          : std_logic;
-signal mem_reg1, reg1, mem_reg2                         : std_logic_vector(M-1 downto 0);
-signal reg2                                             : std_logic_vector(M downto 0);
-signal Rx_ready, Tx_ready, Tx_ready_next, Rx_ready_next : std_logic;
-signal n, n_next                                        : integer;
-signal Rx_done, Tx_done                                 : std_logic;
+    signal state     : statetype; 
+    signal nextstate : statetype;
+    signal clk_out   : std_logic;
+
+    --------------------------
+    -- MOSI Signals
+    --------------------------
+
+    signal Tx_ready      : std_logic_vector(1 downto 0);
+    signal Tx_ready_next : std_logic_vector(1 downto 0);
+    --
+    signal reg1          : std_logic_vector(M-1 downto 0);
+    signal mem_reg1      : std_logic_vector(M-1 downto 0);
+    --
+    signal Tx_done       : std_logic;
+
+    --------------------------
+    -- MISO Signals
+    --------------------------    
+    
+    signal Rx_ready      : std_logic_vector(1 downto 0);
+    signal Rx_ready_next : std_logic_vector(1 downto 0);
+    --
+    signal reg2          : std_logic_vector(M downto 0);
+    signal mem_reg2      : std_logic_vector(M-1 downto 0);
+    --
+    signal Rx_done       : std_logic;
+    
+    --------------------------
+    -- Counters 
+    --------------------------
+
+    signal n      : integer;
+    signal n_next : integer;
+
+
 
 begin
     
      counter: entity work.Counter(Behavioral)
-            generic map (M=>162, N=>8)
-            port map ( clk=>clk, rst=>rst, clk_out=>clk_out);
+               generic map (
+                   M => 162,
+                   N => 8)
+               port map (
+                   clk => clk,
+                   rst => rst,
+                   clk_out => clk_out);
+            
+            
             
      Btx: entity work.Tx(Behavioral)
-        generic map (data_width=>8, stop_ticks=>16)
-        port map ( clk=>clk, rst=>rst, Tx_start=>Tx_ready, qin=>mem_reg1, Tx_out=>mosi_out, done=>Tx_done);
+           generic map (
+               data_width => M,
+               stop_ticks => 16)
+           port map ( 
+               clk => clk,
+               rst => rst,
+               -- 
+               Tx_start => Tx_ready, 
+               --
+               qin => mem_reg1, 
+               Tx_out => mosi_out,
+               --
+               done => Tx_done);
+     
+     
      
      Brx: entity work.Rx(Behavioral)
-        generic map (data_width=>8, stop_ticks=>16)
-        port map ( clk=>clk, rst=>rst, Rx_ready=>Rx_ready, Rx_in=>miso_in, qout=>mem_reg2, done=>Rx_done);
+           generic map (
+               data_width => M, 
+               stop_ticks => 16)
+           port map ( 
+               clk => clk, 
+               rst => rst,
+               --
+               Rx_ready => Rx_ready,
+               --
+               Rx_in => miso_in, 
+               qout => mem_reg2, 
+               done => Rx_done);
+               
+               
          
     process(clk)
     begin
@@ -93,7 +161,16 @@ begin
                     
             if(clk_out = '1') then
                 
-                if(establish = '1') then
+                if(establish(0) = '1') then
+                    n_next <= M/2;
+                    Tx_ready_next(0) <= '1';
+                    Rx_ready_next(0) <= '1';
+                    else
+                    Tx_ready_next(0) <= '0';
+                    Rx_ready_next(0) <= '0';
+                end if;
+                        
+                if(establish(1)= '1') then
                     nextstate <= start;
                 end if;
                 
@@ -111,17 +188,17 @@ begin
                             nextstate <= MOSI; end if;
                 
                     when  "0010" =>
-                        Rx_ready_next <= '1';
+                        Rx_ready_next(1) <= '1';
                         if(Rx_done = '1') then
                             nextstate <= MISO; end if;
                     
                     when others =>
-                        Tx_ready_next <= '0';
-                        Rx_ready_next <= '0';         
+                        Tx_ready_next(1) <= '0';
+                        Rx_ready_next(1) <= '0';         
         
                 end case;
                 
-                if(establish = '0') then
+                if(establish(1) = '0') then
                     nextstate <= ideal;
                 end if;
                 
@@ -138,7 +215,7 @@ begin
                 else
                     
                     if(mem_reg1/=reg1)then
-                        Tx_ready_next <= '1';
+                        Tx_ready_next(1) <= '1';
                         mem_reg1<=reg1;
                     else 
                         nextstate <= stop;
@@ -147,7 +224,7 @@ begin
                 end if;
                 
                 if(Tx_done = '1') then
-                    Tx_ready_next <= '0';
+                    Tx_ready_next(1) <= '0';
                     nextstate <= stop;
                 end if;
                 
@@ -175,8 +252,8 @@ begin
         
             if(clk_out = '1') then
             
-                Tx_ready_next <= '0';
-                Rx_ready_next <= '0';
+                Tx_ready_next(1) <= '0';
+                Rx_ready_next(1) <= '0';
                 nextstate <= ideal;
                 
             end if;  
