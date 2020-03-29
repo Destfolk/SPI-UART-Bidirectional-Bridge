@@ -22,7 +22,7 @@ entity Tx is
           rst      : in std_logic;
     
           Tx_start : in std_logic_vector(1 downto 0);
-          qin      : in std_logic_vector (data_width-1 downto 0);
+          qin      : in std_logic_vector(data_width-1 downto 0);
           
           Tx_out   : out std_logic;
           done     : out std_logic
@@ -44,7 +44,7 @@ architecture Behavioral of Tx is
     
     signal data_reg  : std_logic;
     signal data_next : std_logic;
-    signal tst       : std_logic_vector (data_width-1 downto 0);
+    signal tst       : std_logic_vector(data_width-1 downto 0);
 
     --------------------------
     -- Counters 
@@ -52,8 +52,8 @@ architecture Behavioral of Tx is
     
     signal width    : integer;
     --
-    signal sum_reg  : unsigned (3 downto 0);
-    signal sum_next : unsigned (3 downto 0);
+    signal sum_reg  : unsigned(3 downto 0);
+    signal sum_next : unsigned(3 downto 0);
     --
     signal n        : integer;
     signal n_next   : integer;
