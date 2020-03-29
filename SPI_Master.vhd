@@ -89,7 +89,7 @@ begin
                 state <= ideal;
                 i <= N;
                 j <= N;
-                x<=0;
+                x <= 0;
                 Tx_ready <= '0';       
             else 
                 state <= nextstate;
@@ -112,13 +112,13 @@ begin
                 j_next <= j;
                 x_next <= 0;
                 Tx_ready_next <= '0';
-                width<=N;
+                width <= N;
                     
                 if (clk_out <= '1') then 
                     if (establish(0) = '1') then
                         i_next <= N/2;
                         j_next <= N/2;
-                        width<= N/2;
+                        width <= N/2;
                     end if;
                         
                     if (establish(1) = '1') then
@@ -168,7 +168,7 @@ begin
                                     
                                 if (i = 0) then
                                     i_next <= i-1;
-                                elsif (i=-1) then 
+                                elsif (i = -1) then 
                                     nextstate <= stop;
                                     data_ready <= '0';
                                 else
@@ -184,7 +184,7 @@ begin
                             end if;
                                 
                             if (x = 1) then
-                                if (establish(0)='1') then 
+                                if (establish(0) = '1') then 
                                     qout(15 downto 8) <= "00000000"; 
                                 end if;
                                     
