@@ -24,7 +24,7 @@ entity Rx is
           Rx_ready : in std_logic_vector(1 downto 0);
           Rx_in    : in std_logic;
           
-          qout     : out std_logic_vector (data_width-1 downto 0);
+          qout     : out std_logic_vector(data_width-1 downto 0);
           done     : out std_logic
     );
           
@@ -51,11 +51,11 @@ architecture Behavioral of Rx is
     
     signal width    : integer;
     --
-    signal sum_reg  : unsigned (3 downto 0);
-    signal sum_next : unsigned (3 downto 0);
+    signal sum_reg  : unsigned(3 downto 0);
+    signal sum_next : unsigned(3 downto 0);
     --
-    signal num_reg  : unsigned (3 downto 0);
-    signal num_next : unsigned (3 downto 0);
+    signal num_reg  : unsigned(3 downto 0);
+    signal num_next : unsigned(3 downto 0);
     
 begin
     counter: entity work.Counter(Behavioral)
