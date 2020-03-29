@@ -138,7 +138,7 @@ begin
                         n_next <= M/2;
                         Tx_ready_next(0) <= '1';
                         Rx_ready_next(0) <= '1';
-                        else
+                    else
                         Tx_ready_next(0) <= '0';
                         Rx_ready_next(0) <= '0';
                     end if;
@@ -153,7 +153,8 @@ begin
                     case ss is
                         when  "0001" =>
                             if (data_ready = '1') then
-                                nextstate <= MOSI; end if;
+                                nextstate <= MOSI;
+                            end if;
                 
                         when  "0010" =>
                             Rx_ready_next(1) <= '1';
@@ -207,10 +208,10 @@ begin
             
             when stop =>
                 if (clk_out = '1') then
-                Tx_ready_next(1) <= '0';
-                Rx_ready_next(1) <= '0';
-                nextstate <= ideal;
-            end if;  
+                    Tx_ready_next(1) <= '0';
+                    Rx_ready_next(1) <= '0';
+                    nextstate <= ideal;
+                end if;  
         end case;   
     end process;
                     
