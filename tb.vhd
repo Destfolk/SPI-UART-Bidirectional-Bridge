@@ -8,7 +8,6 @@
 --Email: destfolk@gmail.com
 ----------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.all;
@@ -31,19 +30,17 @@ architecture Behavioral of tb is
     signal data_out  : std_logic_vector(15 downto 0);
     
 begin
-    
     SPI_UART_Communication : entity work.SPI_UART(Behavioral)
-            port map(
-                clk => clk, 
-                rst => rst, 
-                --
-                start => start,
-                slave_width => slave_width,
-                slave => slave,
-                --
-                data_in => data_in, 
-                data_out => data_out);
-
+        port map(
+            clk => clk, 
+            rst => rst, 
+            --
+            start => start,
+            slave_width => slave_width,
+            slave => slave,
+            --
+            data_in => data_in, 
+            data_out => data_out);
 
     process
     begin
@@ -56,7 +53,7 @@ begin
         
     end process;        
     
-    
+        
     process
     begin
     
