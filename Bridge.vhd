@@ -143,7 +143,7 @@ begin
                         Rx_ready_next(0) <= '0';
                     end if;
                         
-                    if (establish(1)= '1') then
+                    if (establish(1) = '1') then
                         nextstate <= start;
                     end if;
                 end if;
@@ -179,9 +179,9 @@ begin
                         reg1(n-1) <= mosi_in;
                         n_next <= n-1;                    
                     else 
-                        if (mem_reg1/=reg1) then
+                        if (mem_reg1 /= reg1) then
                             Tx_ready_next(1) <= '1';
-                            mem_reg1<=reg1;
+                            mem_reg1 <= reg1;
                         else 
                             nextstate <= stop;
                         end if;
@@ -197,7 +197,7 @@ begin
                 if (clk_out = '1') then
                     reg2 <= '0' & mem_reg2;
                 
-                if (n>=0) then
+                if (n >= 0) then
                     miso_out <= reg2(n);
                     n_next <= n-1;
                 else
