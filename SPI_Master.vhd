@@ -8,7 +8,6 @@
 --Email: destfolk@gmail.com
 ----------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.all;
@@ -33,7 +32,6 @@ entity SPI_Master is
            qout       : out std_logic_vector(N-1 downto 0)
     );
            
-    
 end SPI_Master;
 
 architecture Behavioral of SPI_Master is
@@ -74,10 +72,7 @@ architecture Behavioral of SPI_Master is
 
     signal width  : integer;
 
-
-
 begin
-    
     counter: entity work.Counter(Behavioral)
         generic map (
             M => 162,
@@ -87,10 +82,8 @@ begin
             rst => rst, 
             clk_out => clk_out);
 
-    
     process (clk)
     begin
-    
         if rising_edge(clk) then
             if (rst = '1') then
                 state <= ideal;
@@ -110,10 +103,8 @@ begin
         end if;    
     end process;  
     
-    
     process(clk)
     begin
-    
         case state is
             when ideal =>
                 nextstate <= state;
