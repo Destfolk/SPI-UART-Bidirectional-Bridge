@@ -61,22 +61,18 @@ architecture Behavioral of Tx is
     
 
 begin
-
     counter: entity work.Counter(Behavioral)
-              generic map (
-                  M => 162,
-                  N => 8)
-              port map ( 
-                  clk => clk, 
-                  rst => rst, 
-                  clk_out => clk_out);
+        generic map (
+            M => 162,
+            N => 8)
+        port map ( 
+            clk => clk, 
+            rst => rst, 
+            clk_out => clk_out);
             
-    
     process(clk)
     begin
-    
         if rising_edge(clk) then 
-            
             if (rst = '1') then
                 state <= ideal;
                 n <= 0;
@@ -88,98 +84,75 @@ begin
                 sum_reg <= sum_next;
                 data_reg <= data_next;
             end if;
-        
         end if;
-        
     end process;
     
-      
-     process(clk)
-     begin
-     
+    process(clk)
+    begin
         case state is
-        
-           
-        when ideal =>
+            when ideal =>
+                data_next <= '1';
+                nextstate <= state;
+                n_next <= n;
+                sum_next <= sum_reg;
+                done <= '0';
+                width <= data_width;
             
-            data_next <= '1';
-            nextstate <= state;
-            n_next <= n;
-            sum_next <= sum_reg;
-            done <= '0';
-            width <= data_width;
-            
-            if (clk_out = '1') then
-            
-                if(Tx_start(0) = '1') then
-                    width <= data_width/2;
-                end if;
-                
-                if(Tx_start(1) = '1' and tst /=qin) then
-                    nextstate <= start;
-                end if;
-                
-            end if; 
-       
-        when start =>
-            
-            data_next <= '0';
-            tst <= qin;
-            
-            if (clk_out = '1') then
-            
-                if (sum_reg = 15) then
-                    sum_next <= (others => '0');
-                    nextstate <= data;
-                else
-                    sum_next <= sum_reg + 1;
-                end if;     
-            
-            end if;
-            
-        when data =>
-            
-            data_next <=  qin(n);
-            
-            if (clk_out = '1') then 
-                
-                if (sum_reg = 15) then
-                    
-                    if(n = width - 1) then
-                        nextstate <= stop;
-                    else
-                        n_next <= n+1;
+                if (clk_out = '1') then
+                    if (Tx_start(0) = '1') then
+                        width <= data_width/2;
                     end if;
-                    
-                    sum_next <= (others => '0');
-                    
-                else
-                    sum_next <= sum_reg + 1;
-                end if;   
-                    
-            end if;    
-            
-        
-        when stop =>
-        
-            data_next <= '1';
-            
-            if (clk_out = '1') then  
-            
-                if (sum_reg = 15) then 
-                    done <= '1';
-                    nextstate <= ideal;
-                    sum_next <= (others => '0');
-                    n_next <= 0;
-                else
-                    sum_next <= sum_reg + 1;
-                end if;
                 
-            end if;
+                    if (Tx_start(1) = '1' and tst /=qin) then
+                        nextstate <= start;
+                    end if;
+                end if; 
+       
+            when start =>
+                data_next <= '0';
+                tst <= qin;
+            
+                if (clk_out = '1') then
+                    if (sum_reg = 15) then
+                        sum_next <= (others => '0');
+                        nextstate <= data;
+                    else
+                        sum_next <= sum_reg + 1;
+                    end if;     
+                end if;
+            
+            when data =>
+                data_next <=  qin(n);
+            
+                if (clk_out = '1') then 
+                    if (sum_reg = 15) then
+                        if (n = width - 1) then
+                            nextstate <= stop;
+                        else
+                            n_next <= n+1;
+                        end if;
                     
+                        sum_next <= (others => '0');
+                    else
+                        sum_next <= sum_reg + 1;
+                    end if;   
+                end if;  
+                    
+            when stop =>
+                data_next <= '1';
+            
+                if (clk_out = '1') then  
+                    if (sum_reg = 15) then 
+                        done <= '1';
+                        nextstate <= ideal;
+                        sum_next <= (others => '0');
+                        n_next <= 0;
+                    else
+                        sum_next <= sum_reg + 1;
+                    end if;
+                end if;
         end case;
-        
-     end process;
+    end process;
                  
     Tx_out <= data_reg;
     
