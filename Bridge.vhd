@@ -8,7 +8,6 @@
 --Email: destfolk@gmail.com
 ----------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.all;
@@ -75,7 +74,6 @@ architecture Behavioral of Bidirectional_Bridge is
 
 
 begin
-    
      counter: entity work.Counter(Behavioral)
         generic map (
             M => 162,
@@ -84,8 +82,6 @@ begin
             clk => clk,
             rst => rst,
             clk_out => clk_out);
-            
-            
             
      Btx: entity work.Tx(Behavioral)
         generic map (
@@ -102,8 +98,6 @@ begin
             --
             done => Tx_done);
      
-     
-     
      Brx: entity work.Rx(Behavioral)
         generic map (
             data_width => M, 
@@ -118,11 +112,8 @@ begin
             qout => mem_reg2, 
             done => Rx_done);
                
-               
-         
     process(clk)
     begin
-    
         if rising_edge(clk) then
             if (rst = '1') then
                 state <= ideal;
@@ -137,7 +128,6 @@ begin
     
     process(clk)
     begin
-    
         case state is
             when ideal =>
                 nextstate <= state;
