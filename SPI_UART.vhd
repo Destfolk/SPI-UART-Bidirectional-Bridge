@@ -182,10 +182,6 @@ begin
                 
         end case;
                
-    end process;   
-    
-    
-    --data_out <= dout1 when slave = "01" else dout2;
-    
+    end process;       
     
 end Behavioral;
