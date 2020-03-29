@@ -63,27 +63,27 @@ begin
     rst <= '0';
     
     start <= '1';
-    slave<="01";
+    slave <= "01";
     
     slave_width <= '1';
     
-    data_in<="0000000011001100";
+    data_in <= "0000000011001100";
     wait for 2ms;
     
-    data_in<="0000000001010101";
+    data_in <= "0000000001010101";
     wait for 2ms;
     
-    rst<='1';
+    rst <= '1';
     wait for 2*T;
    
-    rst<='0';
+    rst <= '0';
    
     slave_width <= '0';
     
-    data_in<="1100010011001100";
+    data_in <= "1100010011001100";
     wait for 2ms;
     
-    data_in<="1101011010101010";
+    data_in <= "1101011010101010";
     wait for 2ms;
     
     end process;
