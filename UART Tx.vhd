@@ -103,7 +103,7 @@ begin
                         width <= data_width/2;
                     end if;
                 
-                    if (Tx_start(1) = '1' and tst /=qin) then
+                    if (Tx_start(1) = '1' and tst /= qin) then
                         nextstate <= start;
                     end if;
                 end if; 
