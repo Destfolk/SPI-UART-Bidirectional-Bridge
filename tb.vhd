@@ -70,7 +70,6 @@ begin
     
         rst <= '1';
         wait for 2*T;
-   
         rst <= '0';
         slave_width <= '0';
     
