@@ -197,14 +197,14 @@ begin
                 if (clk_out = '1') then
                     reg2 <= '0' & mem_reg2;
                 
-                if (n >= 0) then
-                    miso_out <= reg2(n);
-                    n_next <= n-1;
-                else
-                    nextstate <= stop;
-                    miso_out <= '1';
+                    if (n >= 0) then
+                        miso_out <= reg2(n);
+                        n_next <= n-1;
+                    else
+                        nextstate <= stop;
+                        miso_out <= '1';
+                    end if;
                 end if;
-            end if;
             
             when stop =>
                 if (clk_out = '1') then
