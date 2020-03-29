@@ -8,7 +8,6 @@
 --Email: destfolk@gmail.com
 ----------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.all;
@@ -65,7 +64,6 @@ architecture Behavioral of SPI_UART is
     signal Rx_done : std_logic;
 
 begin
-
     SPI: entity work.SPI_Master(Behavioral)
         generic map (
             N => 16)
