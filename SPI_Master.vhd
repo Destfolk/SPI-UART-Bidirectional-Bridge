@@ -1,19 +1,11 @@
 ----------------------------------------------------------------------------
-
 --UART-SPI BIDIRECTIONAL BRIDGE
-
 --SPI_Master.vhd
-
 --
-
 --GSoC 2020
-
 --
-
 --Copyright (C) 2020 Seif Eldeen Emad Abdalazeem
-
 --Email: destfolk@gmail.com
-
 ----------------------------------------------------------------------------
 
 
