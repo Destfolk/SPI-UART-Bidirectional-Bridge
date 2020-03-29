@@ -64,98 +64,84 @@ architecture Behavioral of SPI_UART is
     signal dout2   : std_logic_vector(15 downto 0);
     signal Rx_done : std_logic;
 
-
-
 begin
 
-
     SPI: entity work.SPI_Master(Behavioral)
-          generic map (
-              N => 16)
-          port map (
-              clk => clk,
-              rst => rst, 
-              --
-              miso => miso,
-              mosi => mosi,
-              --
-              establish => establish,
-              data_ready => data_ready,
-              --
-              ss => ss, 
-              slave => slave,
-              -- 
-              qin => din1,
-              qout => dout1);
-    
-    
+        generic map (
+            N => 16)
+        port map (
+            clk => clk,
+            rst => rst, 
+            --
+            miso => miso,
+            mosi => mosi,
+            --
+            establish => establish,
+            data_ready => data_ready,
+            --
+            ss => ss, 
+            slave => slave,
+            -- 
+            qin => din1,
+            qout => dout1);
     
     Bridge: entity work.Bidirectional_Bridge(Behavioral)
-             generic map (
-                 M => 16)
-             port map ( 
-                 clk => clk,
-                 rst => rst,
-                 --
-                 ss => ss, 
-                 establish => establish,
-                 data_ready => data_ready,
-                 -- 
-                 mosi_in => mosi, 
-                 miso_in => tx_out,
-                 miso_out => miso,
-                 mosi_out => rx_in);
-
-
+        generic map (
+            M => 16)
+        port map ( 
+            clk => clk,
+            rst => rst,
+            --
+            ss => ss, 
+            establish => establish,
+            data_ready => data_ready,
+            -- 
+            mosi_in => mosi, 
+            miso_in => tx_out,
+            miso_out => miso,
+            mosi_out => rx_in);
 
     Tx: entity work.Tx(Behavioral)
-         generic map (
-             data_width => 16,
-             stop_ticks => 16)
-         port map ( 
-             clk => clk,
-             rst => rst,
-             -- 
-             Tx_start => establish,
-             -- 
-             qin => din2, 
-             Tx_out => Tx_out,
-             -- 
-             done => Tx_done);
-                            
-                
-                    
+        generic map (
+            data_width => 16,
+            stop_ticks => 16)
+        port map ( 
+            clk => clk,
+            rst => rst,
+            -- 
+            Tx_start => establish,
+            -- 
+            qin => din2, 
+            Tx_out => Tx_out,
+            -- 
+            done => Tx_done);
+                         
     Rx: entity work.Rx(Behavioral)
-         generic map (
-             data_width => 16,
-             stop_ticks => 16)
-         port map ( 
-             clk => clk, 
-             rst => rst, 
-             --
-             Rx_ready => establish, 
-             --
-             Rx_in => Rx_in, 
-             qout => dout2, 
-             --
-             done => Rx_done);
+        generic map (
+            data_width => 16,
+            stop_ticks => 16)
+        port map ( 
+            clk => clk, 
+            rst => rst, 
+            --
+            Rx_ready => establish, 
+            --
+            Rx_in => Rx_in, 
+            qout => dout2, 
+            --
+            done => Rx_done);
              
-        
     process(clk)
     begin
-    
         case start is
-            
             when '1' =>
                 establish(1) <= '1';
             
             when others =>
                 establish(1) <= '0';
-                
         end case;
         
         case slave_width is
-            
             when '1' =>
                 establish(0) <= '1';    -- 8-bit
             
@@ -164,11 +150,9 @@ begin
             
             when others =>
                 null;
-                
         end case;
     
         case slave is
-        
             when "00" =>
                 din1 <= data_in;
                 data_out <= dout2;
@@ -179,9 +163,7 @@ begin
             
             when others =>
                 null;
-                
         end case;
-               
     end process;       
     
 end Behavioral;
