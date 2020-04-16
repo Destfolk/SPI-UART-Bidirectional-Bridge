@@ -8,5 +8,5 @@ slave => "00" for MOSI
 
 slave => "01" for MISO
 
-once start is toggoled to '1', the code keep sending data given you provide inputs
+once start is toggled to '1', the code keep sending data given you provide inputs
 
