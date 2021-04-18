@@ -1,3 +1,14 @@
+
+----------------------------------------------------------------------------
+--UART-SPI BIDIRECTIONAL BRIDGE
+--UART Tx.vhd
+--
+--GSoC 2020
+--
+--Copyright (C) 2020 Seif Eldeen Emad Abdalazeem
+--Email: destfolk@gmail.com
+----------------------------------------------------------------------------
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
