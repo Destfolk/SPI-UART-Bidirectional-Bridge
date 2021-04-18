@@ -74,13 +74,13 @@ begin
             miso => miso,
             mosi => mosi,
             --
-            establish => establish,
+            establish  => establish,
             data_ready => data_ready,
             --
-            ss => ss, 
+            ss    => ss, 
             slave => slave,
             -- 
-            qin => din1,
+            qin  => din1,
             qout => dout1);
     
     Bridge: entity work.Bidirectional_Bridge(Behavioral)
@@ -90,12 +90,12 @@ begin
             clk => clk,
             rst => rst,
             --
-            ss => ss, 
-            establish => establish,
+            ss         => ss, 
+            establish  => establish,
             data_ready => data_ready,
             -- 
-            mosi_in => mosi, 
-            miso_in => tx_out,
+            mosi_in  => mosi, 
+            miso_in  => tx_out,
             miso_out => miso,
             mosi_out => rx_in);
 
@@ -109,7 +109,7 @@ begin
             -- 
             Tx_start => establish,
             -- 
-            qin => din2, 
+            qin    => din2, 
             Tx_out => Tx_out,
             -- 
             done => Tx_done);
@@ -125,7 +125,7 @@ begin
             Rx_ready => establish, 
             --
             Rx_in => Rx_in, 
-            qout => dout2, 
+            qout  => dout2, 
             --
             done => Rx_done);
              
@@ -152,16 +152,15 @@ begin
     
         case slave is
             when "00" =>
-                din1 <= data_in;
+                din1     <= data_in;
                 data_out <= dout2;
         
             when "01" =>
-                din2 <= data_in;
+                din2     <= data_in;
                 data_out <= dout1;
             
             when others =>
                 null;
         end case;
     end process;       
-    
 end Behavioral;
