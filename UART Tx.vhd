@@ -15,7 +15,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity Tx is
     
     generic( data_width : integer := 8;
-             stop_ticks: integer := 16
+             stop_ticks: integer  := 16
     );
             
     port( clk      : in std_logic;
@@ -66,23 +66,23 @@ begin
             M => 162,
             N => 8)
         port map ( 
-            clk => clk, 
-            rst => rst, 
+            clk     => clk, 
+            rst     => rst, 
             clk_out => clk_out);
             
     process(clk)
     begin
         if rising_edge(clk) then 
             if (rst = '1') then
-                state <= ideal;
-                n <= 0;
-                sum_reg <= (others => '0');
+                n        <= 0;
                 data_reg <= '1';
+                state    <= ideal;
+                sum_reg  <= (others => '0');
             else 
-                state <= nextstate;
-                n <= n_next;
-                sum_reg <= sum_next;
+                n        <= n_next;
                 data_reg <= data_next;
+                state    <= nextstate;
+                sum_reg  <= sum_next;
             end if;
         end if;
     end process;
@@ -91,12 +91,12 @@ begin
     begin
         case state is
             when ideal =>
+                n_next    <= n;
+                done      <= '0';
                 data_next <= '1';
                 nextstate <= state;
-                n_next <= n;
-                sum_next <= sum_reg;
-                done <= '0';
-                width <= data_width;
+                sum_next  <= sum_reg;
+                width     <= data_width;
             
                 if (clk_out = '1') then
                     if (Tx_start(0) = '1') then
@@ -109,12 +109,12 @@ begin
                 end if; 
        
             when start =>
+                tst       <= qin;
                 data_next <= '0';
-                tst <= qin;
             
                 if (clk_out = '1') then
                     if (sum_reg = 15) then
-                        sum_next <= (others => '0');
+                        sum_next  <= (others => '0');
                         nextstate <= data;
                     else
                         sum_next <= sum_reg + 1;
@@ -143,10 +143,10 @@ begin
             
                 if (clk_out = '1') then  
                     if (sum_reg = 15) then 
-                        done <= '1';
+                        done      <= '1';
+                        n_next    <= 0;
                         nextstate <= ideal;
-                        sum_next <= (others => '0');
-                        n_next <= 0;
+                        sum_next  <= (others => '0');
                     else
                         sum_next <= sum_reg + 1;
                     end if;
