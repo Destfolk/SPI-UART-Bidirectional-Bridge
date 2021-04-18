@@ -18,8 +18,8 @@ entity Counter is
     generic( M: integer := 10;
              N: integer := 4);                       --ceil(log2(m)-1)
              
-    Port ( clk : in STD_LOGIC;
-           rst : in STD_LOGIC;
+    Port ( clk     : in STD_LOGIC;
+           rst     : in STD_LOGIC;
            clk_out : out STD_LOGIC);
            
 end Counter;
@@ -32,7 +32,6 @@ begin
 
     process(clk)
     begin
-    
         if rising_edge(clk) then
             if (rst = '1' or reg = M) then 
                 reg <= (others => '0');
@@ -45,6 +44,5 @@ begin
     end process;
        
        reg_next <= reg + 1;
-       clk_out <= '1' when reg = M else '0';
-
+       clk_out  <= '1' when reg = M else '0';
 end Behavioral;
