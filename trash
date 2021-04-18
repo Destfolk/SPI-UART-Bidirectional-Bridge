@@ -1,0 +1,49 @@
+if (clk_out = '1') then
+                    if (establish(1) = '0') then
+                        nextstate <= stop;
+                    else
+			case slave is
+                        when "00" =>
+                           Tx_ready_next <= '1';
+                                
+                            if (Tx_ready <= '1') then
+				case i is 
+                                	when width =>
+                                    		Tx_reg     <= qin;
+                                    		data_ready <= '1';
+                                    
+                                	when width - 1 =>
+                                    		data_ready <= '0';
+
+                                	when '0' => 
+                                    		i_next <= i-1;
+	                                when '-1' =>
+                                    		nextstate  <= stop;
+                                    		data_ready <= '0';
+                                	when others =>
+                                    		i_next    <= i-1;
+                                    		mosi_next <= Tx_reg(i-1);
+				end case;
+                             end if;   
+                            
+                        when "01" =>
+                            if (miso_next = '0') then 
+                                x_next <= 1;
+                            end if;
+                                
+                            if (x = 1) then
+                                if (j = 0) then
+                                    j_next    	      <= width;
+                                    nextstate 	      <= stop;
+
+                                    if (establish(0) = '1') then 
+                                    	qout(15 downto 8) <= "00000000"; 
+                                    end if;
+                                else 
+                                    j_next    <= j-1;
+                                    qout(j-1) <= miso_next;
+                                end if;
+                           end if;
+			end case;
+                    end if;
+                end if;
