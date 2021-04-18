@@ -30,7 +30,6 @@ architecture Behavioral of Counter is
 signal reg, reg_next : unsigned (N-1 downto 0);
 
 begin
-
     process(clk)
     begin
         if rising_edge(clk) then
