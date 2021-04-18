@@ -15,7 +15,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity Rx is
     
     generic( data_width : integer := 8;
-             stop_ticks: integer := 16
+             stop_ticks : integer := 16
     );
             
     port( clk      : in std_logic;
@@ -71,14 +71,14 @@ begin
     begin
         if rising_edge(clk) then
             if (rst = '1') then
-                state <= ideal;
-                sum_reg <= (others => '0');
-                num_reg <= (others => '0');
+                state    <= ideal;
+                sum_reg  <= (others => '0');
+                num_reg  <= (others => '0');
                 data_reg <= (others => '0');
             else 
-                state <= nextstate;
-                sum_reg <= sum_next;
-                num_reg <= num_next;
+                state    <= nextstate;
+                sum_reg  <= sum_next;
+                num_reg  <= num_next;
                 data_reg <= data_next;
             end if;
         end if;        
@@ -88,10 +88,10 @@ begin
     begin
         case state is
             when ideal =>
-                sum_next <= sum_reg;
-                num_next <= num_reg;
+                done      <= '0';
+                sum_next  <= sum_reg;
+                num_next  <= num_reg;
                 data_next <= data_reg;
-                done <= '0';
             
                 if (Rx_in = '0' and Rx_ready(1) = '1') then 
                     nextstate <= start;
@@ -101,7 +101,7 @@ begin
                 if (clk_out = '1') then 
                     if (sum_reg = 7) then  
                         nextstate <= data; 
-                        sum_next <= (others => '0');
+                        sum_next  <= (others => '0');
                     else 
                         sum_next <= sum_reg + 1;
                     end if;
@@ -137,10 +137,10 @@ begin
             when stop =>
                 if (clk_out = '1') then 
                     if (sum_reg = (stop_ticks - 1)) then 
+                        done      <= '1';
                         nextstate <= ideal;
-                        sum_next <= (others => '0');
-                        num_next <= (others => '0');
-                        done <= '1';
+                        sum_next  <= (others => '0');
+                        num_next  <= (others => '0');
                     else 
                         sum_next <= sum_reg + 1;
                     end if;
@@ -149,5 +149,4 @@ begin
     end process;
      
     qout <= data_reg;
-     
 end Behavioral;      
