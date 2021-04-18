@@ -79,8 +79,8 @@ begin
             M => 162,
             N => 8)
         port map (
-            clk => clk,
-            rst => rst,
+            clk     => clk,
+            rst     => rst,
             clk_out => clk_out);
             
      Btx: entity work.Tx(Behavioral)
@@ -93,7 +93,7 @@ begin
             -- 
             Tx_start => Tx_ready, 
             --
-            qin => mem_reg1, 
+            qin    => mem_reg1, 
             Tx_out => mosi_out,
             --
             done => Tx_done);
@@ -109,8 +109,8 @@ begin
             Rx_ready => Rx_ready,
             --
             Rx_in => miso_in, 
-            qout => mem_reg2, 
-            done => Rx_done);
+            qout  => mem_reg2, 
+            done  => Rx_done);
                
     process(clk)
     begin
@@ -118,10 +118,10 @@ begin
             if (rst = '1') then
                 state <= ideal;
             else
-                state <= nextstate;
+                n        <= n_next;
+                state    <= nextstate;
                 Tx_ready <= Tx_ready_next;
                 Rx_ready <= Rx_ready_next;
-                n <= n_next;
             end if;
         end if;        
     end process;
@@ -130,12 +130,12 @@ begin
     begin
         case state is
             when ideal =>
+                n_next    <= M;
                 nextstate <= state;
-                n_next <= M;
                     
                 if (clk_out = '1') then
                     if (establish(0) = '1') then
-                        n_next <= M/2;
+                        n_next           <= M/2;
                         Tx_ready_next(0) <= '1';
                         Rx_ready_next(0) <= '1';
                     else
@@ -176,20 +176,20 @@ begin
             when MOSI =>
                 if (clk_out = '1') then
                     if (n > 0) then
-                        reg1(n-1) <= mosi_in;
-                        n_next <= n-1;                    
+                        n_next    <= n-1;         
+                        reg1(n-1) <= mosi_in;           
                     else 
                         if (mem_reg1 /= reg1) then
+                            mem_reg1         <= reg1;
                             Tx_ready_next(1) <= '1';
-                            mem_reg1 <= reg1;
                         else 
                             nextstate <= stop;
                         end if;
                     end if;
                 
                     if (Tx_done = '1') then
+                        nextstate        <= stop;
                         Tx_ready_next(1) <= '0';
-                        nextstate <= stop;
                     end if;
                 end if;
             
@@ -198,11 +198,11 @@ begin
                     reg2 <= '0' & mem_reg2;
                 
                     if (n >= 0) then
+                        n_next   <= n-1;
                         miso_out <= reg2(n);
-                        n_next <= n-1;
                     else
+                        miso_out  <= '1';
                         nextstate <= stop;
-                        miso_out <= '1';
                     end if;
                 end if;
             
@@ -210,9 +210,8 @@ begin
                 if (clk_out = '1') then
                     Tx_ready_next(1) <= '0';
                     Rx_ready_next(1) <= '0';
-                    nextstate <= ideal;
+                    nextstate        <= ideal;
                 end if;  
         end case;   
     end process;
-                    
 end Behavioral;
