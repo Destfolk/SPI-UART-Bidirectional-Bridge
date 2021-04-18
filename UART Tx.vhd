@@ -44,7 +44,7 @@ architecture Behavioral of Tx is
     
     signal data_reg  : std_logic;
     signal data_next : std_logic;
-    signal tst       : std_logic_vector(data_width-1 downto 0);
+    signal tst       : std_logic_vector(data_width-1 downto 0) := "00000000";
 
     --------------------------
     -- Counters 
