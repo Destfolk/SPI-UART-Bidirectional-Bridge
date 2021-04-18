@@ -155,5 +155,4 @@ begin
     end process;
                  
     Tx_out <= data_reg;
-    
 end Behavioral;
