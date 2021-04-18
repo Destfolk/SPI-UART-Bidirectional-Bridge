@@ -78,27 +78,27 @@ begin
             M => 162,
             N => 8)
         port map ( 
-            clk => clk,
-            rst => rst, 
+            clk     => clk,
+            rst     => rst, 
             clk_out => clk_out);
 
     process (clk)
     begin
         if rising_edge(clk) then
             if (rst = '1') then
-                state <= ideal;
-                i <= N;
-                j <= N;
-                x <= 0;
+                i        <= N;
+                j        <= N;
+                x        <= 0;
+                state    <= ideal;
                 Tx_ready <= '0';       
             else 
                 state <= nextstate;
-                i <= i_next;
-                j <= j_next;
-                x <= x_next;
-                Tx_ready <= Tx_ready_next;
-                mosi <= mosi_next;
+                i         <= i_next;
+                j         <= j_next;
+                x         <= x_next;
+                mosi      <= mosi_next;
                 miso_next <= miso;
+                Tx_ready  <= Tx_ready_next;
             end if;
         end if;    
     end process;  
@@ -107,18 +107,18 @@ begin
     begin
         case state is
             when ideal =>
-                nextstate <= state;
-                i_next <= i;
-                j_next <= j;
-                x_next <= 0;
+                width         <= N;
+                i_next        <= i;
+                j_next        <= j;
+                x_next        <= 0;
                 Tx_ready_next <= '0';
-                width <= N;
+                nextstate     <= state;
                     
                 if (clk_out <= '1') then 
                     if (establish(0) = '1') then
+                        width  <= N/2;
                         i_next <= N/2;
                         j_next <= N/2;
-                        width <= N/2;
                     end if;
                         
                     if (establish(1) = '1') then
@@ -158,7 +158,7 @@ begin
                                 
                             if (Tx_ready <= '1') then 
                                 if (i = width) then
-                                    Tx_reg <= qin;
+                                    Tx_reg     <= qin;
                                     data_ready <= '1';
                                 end if;
                                     
@@ -169,11 +169,11 @@ begin
                                 if (i = 0) then
                                     i_next <= i-1;
                                 elsif (i = -1) then 
-                                    nextstate <= stop;
+                                    nextstate  <= stop;
                                     data_ready <= '0';
                                 else
+                                    i_next    <= i-1;
                                     mosi_next <= Tx_reg(i-1);
-                                    i_next <= i-1;
                                 end if;
                              end if;   
                         end if;
@@ -189,11 +189,11 @@ begin
                                 end if;
                                     
                                 if (j = 0) then
-                                    j_next <= width;
+                                    j_next    <= width;
                                     nextstate <= stop;
                                 else 
+                                    j_next    <= j-1;
                                     qout(j-1) <= miso_next;
-                                    j_next <= j-1;
                                 end if;
                            end if;
                         end if;
@@ -202,12 +202,11 @@ begin
                  
             when stop =>
                 if (clk_out = '1') then   
-                    i_next <= N;
-                    j_next <= N;
-                    x_next <= 0;
+                    i_next    <= N;
+                    j_next    <= N;
+                    x_next    <= 0;
                     nextstate <= ideal;
                 end if;
         end case;
     end process;     
-            
 end Behavioral;
