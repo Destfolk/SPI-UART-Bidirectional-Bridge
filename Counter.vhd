@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 --UART-SPI BIDIRECTIONAL BRIDGE
---UART Tx.vhd
+--Counter.vhd
 --
 --GSoC 2020
 --
